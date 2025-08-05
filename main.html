@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Papan Skor GAPLEH</title>
+    <style>
+        /* CSS untuk mempercantik tampilan */
+       body {
+            font-family: 'Poppins', sans-serif;
+            /* Latar belakang gradien gelap yang dinamis */
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #f0f0f0; /* Warna teks dasar yang kontras dengan background gelap */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            /* Efek gradien pada teks judul */
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.3); /* Bayangan teks untuk efek glow */
+        }
+
+        .papan-skor-container {
+            width: 100%;
+            max-width: 500px;
+            /* Efek Glassmorphism: background transparan dengan blur */
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px); /* Untuk Safari */
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 20px;
+            margin-bottom: 20px; /* Added margin for input fields */
+        }
+
+        .input-pemain-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-pemain-container input[type="text"] {
+            flex-grow: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #f0f0f0;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-pemain-container input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .input-pemain-container input[type="text"]:focus {
+            border-color: #00f2fe;
+        }
+
+        .tombol-tambah-pemain {
+            background: linear-gradient(90deg, #28a745, #218838); /* Green gradient */
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px 0 rgba(40, 167, 69, 0.3);
+        }
+
+        .tombol-tambah-pemain:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px 0 rgba(40, 167, 69, 0.4);
+        }
+
+        .pemain {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .pemain:hover {
+            background-color: rgba(255, 255, 255, 0.05); /* Highlight saat cursor di atas baris pemain */
+        }
+
+        /* Hilangkan garis di pemain terakhir */
+        .pemain:last-child {
+            border-bottom: none;
+        }
+
+        .nama-pemain {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .info-skor {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Jarak antara angka dan grup tombol */
+        }
+
+        .skor {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #ffffff; /* Warna merah menyala untuk skor kalah */
+            min-width: 50px;
+            text-align: center;
+            /* Efek glow pada angka skor */
+            text-shadow: 0 0 15px #ff4757;
+        }
+
+        .grup-tombol {
+            display: flex;
+            gap: 8px; /* Jarak antara tombol + dan - */
+        }
+
+        .tombol-tambah, .tombol-kurang {
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            font-size: 1.8em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1; /* Menyelaraskan simbol secara vertikal */
+        }
+
+        .tombol-tambah {
+            background: linear-gradient(90deg, #007bff, #00d4ff);
+            box-shadow: 0 4px 15px 0 rgba(0, 172, 255, 0.3);
+        }
+
+        .tombol-tambah:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px 0 rgba(0, 172, 255, 0.4);
+        }
+        
+        .tombol-kurang {
+            background: linear-gradient(90deg, #ff8c00, #ffae42); /* Gradien Oranye */
+            box-shadow: 0 4px 15px 0 rgba(255, 140, 0, 0.3);
+        }
+
+        .tombol-kurang:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px 0 rgba(255, 140, 0, 0.4);
+        }
+
+        .tombol-reset {
+            margin-top: 30px;
+            /* Gradien merah untuk tombol reset */
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px 0 rgba(255, 65, 108, 0.3);
+        }
+
+        .tombol-reset:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px 0 rgba(255, 65, 108, 0.4);
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Papan Skor GAPLEH</h1>
+
+    <div class="input-pemain-container">
+        <input type="text" id="namaPemainBaru" placeholder="Masukkan nama pemain">
+        <button class="tombol-tambah-pemain" onclick="tambahPemain()">Tambah Pemain</button>
+    </div>
+
+    <div class="papan-skor-container" id="papanSkor">
+        </div>
+
+    <button class="tombol-reset" onclick="resetSkor()">Reset Semua Skor</button>
+
+    <script>
+        let playerCount = 0; // To keep track of unique player IDs
+
+        /**
+         * Fungsi untuk menambah angka kekalahan seorang pemain.
+         * @param {string} idSkor - ID dari elemen span yang menampilkan skor.
+         */
+        function tambahKalah(idSkor) {
+            const elemenSkor = document.getElementById(idSkor);
+            let skorSaatIni = parseInt(elemenSkor.innerText);
+            skorSaatIni++;
+            elemenSkor.innerText = skorSaatIni;
+        }
+
+        /**
+         * Fungsi untuk mengurangi angka kekalahan seorang pemain.
+         * @param {string} idSkor - ID dari elemen span yang menampilkan skor.
+         */
+        function kurangiKalah(idSkor) {
+            const elemenSkor = document.getElementById(idSkor);
+            let skorSaatIni = parseInt(elemenSkor.innerText);
+            
+            // Hanya kurangi jika skor lebih besar dari 0
+            if (skorSaatIni > 0) {
+                skorSaatIni--;
+                elemenSkor.innerText = skorSaatIni;
+            }
+        }
+
+        /**
+         * Fungsi untuk menambahkan pemain baru ke papan skor.
+         */
+        function tambahPemain() {
+            const namaPemainInput = document.getElementById('namaPemainBaru');
+            const namaPemain = namaPemainInput.value.trim(); // Get and trim the input value
+
+            if (namaPemain === "") {
+                alert("Nama pemain tidak boleh kosong!");
+                return;
+            }
+
+            playerCount++;
+            const playerId = `pemain-${playerCount}`;
+            const skorId = `skor-${playerId}`;
+
+            const papanSkor = document.getElementById('papanSkor');
+
+            const divPemain = document.createElement('div');
+            divPemain.classList.add('pemain');
+
+            divPemain.innerHTML = `
+                <span class="nama-pemain">${namaPemain}</span>
+                <div class="info-skor">
+                    <span id="${skorId}" class="skor">0</span>
+                    <div class="grup-tombol">
+                        <button class="tombol-kurang" onclick="kurangiKalah('${skorId}')">-</button>
+                        <button class="tombol-tambah" onclick="tambahKalah('${skorId}')">+</button>
+                    </div>
+                </div>
+            `;
+            papanSkor.appendChild(divPemain);
+
+            // Clear the input field after adding the player
+            namaPemainInput.value = '';
+        }
+
+        /**
+         * Fungsi untuk mereset semua skor kembali ke 0.
+         */
+        function resetSkor() {
+            if (confirm("Apakah Anda yakin ingin mereset semua skor?")) {
+                const semuaSkor = document.querySelectorAll('.skor');
+                semuaSkor.forEach(elemen => {
+                    elemen.innerText = '0';
+                });
+            }
+        }
+    </script>
+
+</body>
+</html>
