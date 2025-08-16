@@ -6,7 +6,7 @@
     <title>Papan Skor GAPLEH</title>
     <style>
         /* CSS untuk mempercantik tampilan */
-       body {
+        body {
             font-family: 'Poppins', sans-serif;
             /* Latar belakang gradien gelap yang dinamis */
             background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
@@ -98,6 +98,7 @@
             padding: 18px 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             transition: background-color 0.3s ease;
+            flex-wrap: wrap; /* Allow content to wrap on smaller screens */
         }
 
         .pemain:hover {
@@ -112,21 +113,52 @@
         .nama-pemain {
             font-size: 1.2em;
             font-weight: 600;
+            flex-basis: 100%; /* Take full width on top */
+            margin-bottom: 10px; /* Space below name */
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .score-row:last-child {
+            margin-bottom: 0;
         }
 
         .info-skor {
             display: flex;
             align-items: center;
             gap: 15px; /* Jarak antara angka dan grup tombol */
+            flex: 1; /* Take available space */
+            justify-content: flex-end; /* Align to the right */
+        }
+
+        .score-label {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.7);
+            min-width: 50px;
+            text-align: right;
         }
 
         .skor {
             font-size: 2.2em;
             font-weight: 700;
-            color: #ffffff; /* Warna merah menyala untuk skor kalah */
             min-width: 50px;
             text-align: center;
-            /* Efek glow pada angka skor */
+        }
+        
+        /* Warna untuk skor menang */
+        .skor.menang {
+            color: #39ff14; /* Neon Green */
+            text-shadow: 0 0 15px #39ff14;
+        }
+
+        /* Warna untuk skor kalah */
+        .skor.kalah {
+            color: #ff4757; /* Neon Red */
             text-shadow: 0 0 15px #ff4757;
         }
 
@@ -191,6 +223,34 @@
             box-shadow: 0 6px 20px 0 rgba(255, 65, 108, 0.4);
         }
 
+        @media (max-width: 400px) {
+            .input-pemain-container {
+                flex-direction: column;
+            }
+            .tombol-tambah-pemain {
+                width: 100%;
+            }
+            .pemain {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .nama-pemain {
+                margin-bottom: 10px;
+            }
+            .score-row {
+                flex-direction: column;
+                align-items: flex-end;
+                width: auto;
+            }
+            .score-label {
+                align-self: flex-start;
+                margin-bottom: 5px;
+            }
+            .info-skor {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
     </style>
 </head>
 <body>
@@ -203,9 +263,9 @@
     </div>
 
     <div class="papan-skor-container" id="papanSkor">
-        </div>
+    </div>
 
-    <button class="tombol-reset" onclick="resetSkor()">Reset Semua Skor</button>
+    <button class="tombol-reset" onclick="resetSemuaSkor()">Reset Semua Skor</button>
 
     <script>
         let playerCount = 0; // To keep track of unique player IDs
@@ -214,7 +274,7 @@
          * Fungsi untuk menambah angka kekalahan seorang pemain.
          * @param {string} idSkor - ID dari elemen span yang menampilkan skor.
          */
-        function tambahKalah(idSkor) {
+        function tambahSkor(idSkor) {
             const elemenSkor = document.getElementById(idSkor);
             let skorSaatIni = parseInt(elemenSkor.innerText);
             skorSaatIni++;
@@ -225,7 +285,7 @@
          * Fungsi untuk mengurangi angka kekalahan seorang pemain.
          * @param {string} idSkor - ID dari elemen span yang menampilkan skor.
          */
-        function kurangiKalah(idSkor) {
+        function kurangiSkor(idSkor) {
             const elemenSkor = document.getElementById(idSkor);
             let skorSaatIni = parseInt(elemenSkor.innerText);
             
@@ -250,7 +310,8 @@
 
             playerCount++;
             const playerId = `pemain-${playerCount}`;
-            const skorId = `skor-${playerId}`;
+            const skorMenangId = `skor-menang-${playerId}`;
+            const skorKalahId = `skor-kalah-${playerId}`;
 
             const papanSkor = document.getElementById('papanSkor');
 
@@ -259,11 +320,24 @@
 
             divPemain.innerHTML = `
                 <span class="nama-pemain">${namaPemain}</span>
-                <div class="info-skor">
-                    <span id="${skorId}" class="skor">0</span>
-                    <div class="grup-tombol">
-                        <button class="tombol-kurang" onclick="kurangiKalah('${skorId}')">-</button>
-                        <button class="tombol-tambah" onclick="tambahKalah('${skorId}')">+</button>
+                <div class="score-row">
+                    <span class="score-label">Menang:</span>
+                    <div class="info-skor">
+                        <span id="${skorMenangId}" class="skor menang">0</span>
+                        <div class="grup-tombol">
+                            <button class="tombol-kurang" onclick="kurangiSkor('${skorMenangId}')">-</button>
+                            <button class="tombol-tambah" onclick="tambahSkor('${skorMenangId}')">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="score-row">
+                    <span class="score-label">Kalah:</span>
+                    <div class="info-skor">
+                        <span id="${skorKalahId}" class="skor kalah">0</span>
+                        <div class="grup-tombol">
+                            <button class="tombol-kurang" onclick="kurangiSkor('${skorKalahId}')">-</button>
+                            <button class="tombol-tambah" onclick="tambahSkor('${skorKalahId}')">+</button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -273,7 +347,7 @@
             namaPemainInput.value = '';
         }
 
-        function resetSkor() {
+        function resetSemuaSkor() {
             if (confirm("Apakah Anda yakin ingin mereset semua skor?")) {
                 const semuaSkor = document.querySelectorAll('.skor');
                 semuaSkor.forEach(elemen => {
